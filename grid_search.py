@@ -1,0 +1,47 @@
+import pandas as pd 
+import numpy as np 
+from data_preprocess import DataPreprocessing
+from sklearn import preprocessing
+from sklearn import utils
+from random import seed
+from sklearn.model_selection import GridSearchCV
+import pickle
+import warnings
+warnings.filterwarnings("ignore")
+
+class CogniGridSearch:
+
+    ''' Grid Search optimization where the feature train and label train files are loaded'''
+
+    def __init__(self,param_grid,model_optimize = None,g_best = None):
+
+        self.param_grid = param_grid
+        self.g_best = g_best 
+        self.model_optimize = model_optimize
+    
+    # Grid Search Optimization with three files picked Feature Train, Label Train, Model 
+    def grid_search_cv(self,cv):
+        f_file = "/home/congnitensor/Python_projects/model_class/file_logs/feature_train.txt"
+        # f_file = "feature_train.txt"
+        l_file = "/home/congnitensor/Python_projects/model_class/file_logs/label_train.txt"
+        # l_file = "label_train.txt" 
+        with open(f_file,'rb') as feature_file:
+            features = pickle.load(feature_file)
+        with open(l_file,'rb') as label_file:
+            labels = pickle.load(label_file) 
+        with open(self.model_optimize,'rb') as model_file: 
+            m_name = pickle.load(model_file) 
+
+        grid_search = GridSearchCV(estimator = m_name, param_grid = self.param_grid, n_jobs= None, cv= cv, verbose=0, iid = 'False')
+        gxb = grid_search.fit(features,labels)
+        self.g_best = gxb.best_params_
+        print("The best parameters-> by grid search:{}".format(self.g_best)) 
+    
+    
+        
+        
+        
+
+        
+            
+    
